@@ -1,0 +1,54 @@
+import { StyleSheet } from "react-native";
+const style = StyleSheet.create({
+conatra:{
+    marginHorizontal:"10%",
+    marginVertical:"5%",
+    flex:1,
+},
+TextWelcome:{
+    fontSize:30,
+    color:"black",
+    fontWeight:"500"
+},
+TextInputEmail:{
+    borderColor:"black",
+    borderWidth:1,
+    marginTop:20,
+    borderRadius:10
+},
+passwordView:{
+    borderColor:"black",
+    borderWidth:1,
+    borderRadius:10,
+    marginTop:"10%",
+},
+LoginButton:{
+    backgroundColor:"black",
+   marginVertical:"12%",
+   paddingHorizontal:"10%",
+   paddingVertical:"4%",
+   borderRadius:10
+},loginText:{
+    color:"white",
+    textAlign:"center",
+    fontSize:20,
+    fontWeight:"bold",
+},
+Login:{
+    textAlign:"center",
+    fontSize:20,
+    fontWeight:"500"
+},
+facbookView:{
+    flexDirection:'row',
+    justifyContent:"space-between",
+    alignItems:'center',
+    marginVertical:"8%"
+},
+facebookIcon:{
+    borderWidth:1,
+    borderColor:"black",
+    padding:2
+}
+})
+export default style
