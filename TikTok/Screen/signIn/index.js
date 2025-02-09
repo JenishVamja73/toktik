@@ -1,31 +1,40 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Alert, Pressable, Text, TextInput, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import auth from "@react-native-firebase/auth";
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import style from "./style";
 
 const SignIN = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isMounted, setIsMounted] = useState(true);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false); // Cleanup on unmount
+  }, []);
 
   const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match!");
-      return;
-    }
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-      console.log("User registered:", userCredential.user);
-      Alert.alert("Success", "User registered successfully!");
-      navigation.navigate("Home"); // Navigate to the home screen after registration
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      if (isMounted) {
+        Alert.alert('Success', 'User registered successfully!');
+        navigation.navigate('Home');
+      }
     } catch (error) {
-      console.error(error);
-      Alert.alert("Registration Failed", error.message);
+      if (isMounted) {
+        Alert.alert('Error', error.message);
+      }
+      console.error('Registration Error:', error);
     }
   };
+
+  
+
 
   return (
     <>
@@ -41,35 +50,36 @@ const SignIN = ({ navigation }) => {
           <TextInput
             style={style.TextInputEmail}
             placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
+            value={userName}
+            onChangeText={setUserName}
+
           />
         </View>
         <View>
           <TextInput
             style={style.TextInputEmail}
             placeholder="Email"
-            keyboardType="email-address"
             value={email}
             onChangeText={setEmail}
+            keyboardType="email-address"
           />
         </View>
         <View>
           <TextInput
             style={style.TextInputEmail}
             placeholder="Password"
-            secureTextEntry
             value={password}
             onChangeText={setPassword}
+            secureTextEntry
           />
         </View>
         <View>
           <TextInput
             style={style.TextInputEmail}
             placeholder="Confirm Password"
-            secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}
+            secureTextEntry
           />
         </View>
         <Pressable style={style.LoginButton} onPress={handleRegister}>
