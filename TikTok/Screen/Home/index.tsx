@@ -20,7 +20,7 @@ return (
     tabBarInactiveTintColor: 'gray', // Inactive icon color
   }}
 >
-        <Tab.Screen name="reel" component={Reel} options={{
+  <Tab.Screen name="reel" component={Reel} options={{
           headerShown: false, tabBarIcon: ({ color, size }) => (
             <AntDesign
               name="home" size={size} color={color} />

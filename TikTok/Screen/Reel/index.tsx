@@ -3,27 +3,32 @@ import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View }
 import Sound from 'react-native-sound';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Video from 'react-native-video';
+import { useRoute } from '@react-navigation/native';  // For accessing route params
+
 
 
 const { width, height } = Dimensions.get('window');
 
 const data = [
-  { id: '1', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 1' ,musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-  { id: '2', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 2',musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'  },
-  { id: '3', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 3' ,musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { id: '1', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 1', musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { id: '2', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 2', musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { id: '3', uri: 'https://www.w3schools.com/html/movie.mp4', title: 'Video 3', musicUri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
 ];
 
 const Reel = () => {
+  const route = useRoute(); // Access route params
+  const { userData } = route.params || {}; // Get userData from route.params
   const scrollY = useRef(new Animated.Value(0)).current;
   const [liked, setLiked] = useState({});
   const [sound, setSound] = useState(null);
 
+  console.log(userData, "UserData")
   const handleLike = (id) => {
     setLiked((prevState) => ({
       ...prevState,
       [id]: !prevState[id], // Toggle the like status
     }));
-  };const handleMusicPlay = (musicUri) => {
+  }; const handleMusicPlay = (musicUri) => {
     // Stop any currently playing music
     if (sound) {
       sound.stop(() => {
@@ -69,27 +74,36 @@ const Reel = () => {
             resizeMode="cover" // Scale the video to cover the container
             paused={paused} // Pause video when out of view
           />
-            {/* Overlay content */}
-            <View style={styles.overlay}>
-                <View style={styles.imageView}>
+          {/* Overlay content */}
+          <View style={styles.overlay}>
+            <View style={styles.imageView}>
               <Image style={styles.userImage} source={require('./img/User.png')} />
-              </View>
-              <TouchableOpacity onPress={() => handleLike(item.id)} style={styles.likeButton}>
-                <AntDesign
-                  name={liked[item.id] ? 'heart' : 'hearto'}
-                  size={30}
-                  color={liked[item.id] ? 'red' : 'white'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleMusicPlay(item.musicUri)} style={styles.musicButton}>
-            <Text style={styles.musicButtonText}>{item.musicUri}</Text>
-          </TouchableOpacity>
-         </View>
+              {/* Display userData name */}
+            </View>
+
+            <TouchableOpacity onPress={() => handleLike(item.id)} style={[styles.likeButton,{marginTop:"10%",left:"10%"}]}>
+              <AntDesign
+                name={liked[item.id] ? 'heart' : 'hearto'}
+                size={30}
+                color={liked[item.id] ? 'red' : 'white'}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handleMusicPlay(item.musicUri)} style={{marginBottom:"10%"}}>
+            <Text style={{ color: "white", fontSize: 20, right:"1%" }}>{userData.userName}</Text> 
+
+              <Text style={styles.musicButtonText}>{item.musicUri}</Text>
+            </TouchableOpacity>
+            
+
+
+          </View>
         </Animated.View>
         <Text style={styles.videoTitle}>{item.title}</Text>
       </View>
     );
   };
+
 
   return (
     <Animated.FlatList
@@ -153,8 +167,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     // bottom:"20%",
-    top:"5%",
-    left:"5%"
+    top: "5%",
+    left: "5%"
 
   },
   videoTitle: {
@@ -164,13 +178,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-  imageView:{
- top:"45%",
- left:"5%",
- 
+  imageView: {
+    top: "45%",
+    left: "5%",
+
   },
-  musicButtonText:{
-    color:"black"
+  musicButtonText: {
+    color: "black"
   }
 });
 

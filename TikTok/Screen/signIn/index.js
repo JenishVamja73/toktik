@@ -1,9 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { Alert, Pressable, Text, TextInput, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import style from "./style";
 
 const SignIN = ({ navigation }) => {
@@ -11,30 +10,44 @@ const SignIN = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isMounted, setIsMounted] = useState(true);
 
-  useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false); // Cleanup on unmount
-  }, []);
-
-  const handleRegister = async () => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      if (isMounted) {
-        Alert.alert('Success', 'User registered successfully!');
-        navigation.navigate('Home');
+    const handleRegister = async () => {
+      if (!userName || !email || !password || !confirmPassword) {
+        Alert.alert("Error", "Please fill in all fields.");
+        return;
       }
-    } catch (error) {
-      if (isMounted) {
-        Alert.alert('Error', error.message);
+
+      if (password !== confirmPassword) {
+        Alert.alert("Error", "Passwords do not match.");
+        return;
       }
-      console.error('Registration Error:', error);
-    }
-  };
 
-  
+      try {
+        const userData = {
+          userName,
+          email,
+          password, // In a real-world app, never store plain text passwords. Use encryption or a secure method.
+        };
 
+        await AsyncStorage.setItem("user_data", JSON.stringify(userData));
+        Alert.alert("Success", "Registration successful!");
+
+        // Clear the form fields
+        setUserName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+
+        // Navigate to the login screen
+        navigation.navigate("reel", { userData });
+        console.log(userData, "Before Navigation");
+
+
+      } catch (error) {
+        console.error("Failed to save user data", error);
+        Alert.alert("Error", "Something went wrong. Please try again.");
+      }
+    };
 
   return (
     <>
@@ -52,7 +65,6 @@ const SignIN = ({ navigation }) => {
             placeholder="Username"
             value={userName}
             onChangeText={setUserName}
-
           />
         </View>
         <View>
